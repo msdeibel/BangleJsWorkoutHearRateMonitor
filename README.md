@@ -5,6 +5,8 @@ This app is for the [Bangle.js watch](https://banglejs.com/). While active it mo
 and will notify you with a buzz whenever your heart rate falls below or jumps above the set limits.
 
 # How does it work?
+[Try it out](https://www.espruino.com/ide/emulator.html?codeurl=https://raw.githubusercontent.com/msdeibel/BangleJsWorkoutHearRateMonitor/master/WorkoutHeartRateMonitor.js&upload) using the [online Espruino emulator](https://www.espruino.com/ide/emulator.html).
+
 ## Setting the limits
 For setting the lower limit press the left part of the watch's touch screen.
 Then adjust the value with the buttons 1 (top) and 3 (bottom) of the watch.
