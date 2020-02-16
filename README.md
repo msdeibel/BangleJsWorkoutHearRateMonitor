@@ -24,6 +24,6 @@ and below 50% they turn red.
 ## Closing the app
 Pressing button 2 (middle) will switch off the HRM of the watch and return you to the home screen.
 
-#HRM usage
+# HRM usage
 The HRM is switched on when the app is started. It stays switch on while the app is running, even
 when the watch screen goes to stand-by.
