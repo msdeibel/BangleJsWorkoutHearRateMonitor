@@ -12,6 +12,8 @@ function drawTrainingHeartRate() {
     renderLowerLimit();
 
     renderConfidenceBars();
+
+    buzz();
 }
 
 function renderUpperLimit() {
@@ -65,6 +67,22 @@ function renderConfidenceBars(){
 
     g.fillRect(55, 110, 65, 140);
     g.fillRect(175, 110, 185, 140);
+}
+
+function buzz()
+{
+    if(currentHeartRate > upperLimit)
+    {
+        Bangle.buzz(70);
+        setTimeout(() => { Bangle.buzz(70); }, 70);
+        setTimeout(() => { Bangle.buzz(70); }, 70);
+    }
+
+    if(currentHeartRate < upperLimit)
+    {
+        Bangle.buzz(140);
+        setTimeout(() => { Bangle.buzz(140); }, 140);
+    }
 }
 
 function onHrm(hrm){
