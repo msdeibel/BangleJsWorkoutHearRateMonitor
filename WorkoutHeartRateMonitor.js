@@ -5,32 +5,44 @@ const Setter = {
     LOWER: 'lower'
 };
     
-const shortBuzzTimeInMs = 100;
+const shortBuzzTimeInMs = 50;
 const longBuzzTimeInMs = 200;
 
-let upperLimit = 130;
-let lowerLimit = 100;
+let upperLimit = 90;
+let upperLimitChanged = true;
+
+let lowerLimit = 50;
+let lowerLimitChanged = true;
+
 let limitSetter = Setter.NONE;
+
 let currentHeartRate = 0;
 let hrConfidence = -1;
+let hrOrConfidenceChanged = true;
+
 
 let setterHighlightTimeout;
 
 function drawTrainingHeartRate() {
-  renderButtonIcons();
- 
-  renderUpperLimit();
- 
-  renderCurrentHeartRate();
- 
-  renderLowerLimit();
- 
-  renderConfidenceBars();
- 
+  //Only redraw if the display is on
+  if (Bangle.isLCDOn()) {
+    renderButtonIcons();
+  
+    renderUpperLimit();
+  
+    renderCurrentHeartRate();
+  
+    renderLowerLimit();
+  
+    renderConfidenceBars();
+  }
+
   buzz();
 }
 
 function renderUpperLimit() {
+  if(!upperLimitChanged) { return; }
+  
   g.setColor(255,0,0);
   g.fillRect(125,40, 210, 70);
   g.fillRect(180,70, 210, 200);
@@ -60,9 +72,13 @@ function renderUpperLimit() {
   }
   g.setFontVector(10);
   g.drawString("Upper  : " + upperLimit, 130,50);
+  
+  upperLimitChanged = false;
 }
   
 function renderCurrentHeartRate() {
+  if(!hrOrConfidenceChanged) { return; }
+  
   g.setColor(255,255,255);
   g.fillRect(45, 110, 165, 140);
   g.setColor(0,0,0);
@@ -77,6 +93,8 @@ function renderCurrentHeartRate() {
 }
   
 function renderLowerLimit() {
+  if(!lowerLimitChanged) { return; }
+  
   g.setColor(0,0,255);
   g.fillRect(10, 180, 100, 210);
   g.fillRect(10, 50, 40, 180);
@@ -108,9 +126,13 @@ function renderLowerLimit() {
   }
   g.setFontVector(10);
   g.drawString("Lower  : " + lowerLimit, 20,190);
+  
+  lowerLimitChanged = false;
 }
   
 function renderConfidenceBars(){
+  if(!hrOrConfidenceChanged) { return; }
+  
   if(hrConfidence >= 85){
       g.setColor(0, 255, 0);
   } else if (hrConfidence >= 50) {
@@ -152,7 +174,7 @@ function buzz()
      setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs);
   }
 
-  if(currentHeartRate < upperLimit)
+  if(currentHeartRate < lowerLimit)
   {
      Bangle.buzz(longBuzzTimeInMs);
      setTimeout(() => { Bangle.buzz(longBuzzTimeInMs); }, longBuzzTimeInMs);
@@ -160,6 +182,7 @@ function buzz()
 }
   
 function onHrm(hrm){
+  hrOrConfidenceChanged = (currentHeartRate !== hrm.bpm || hrConfidence !== hrm.confidence);
   currentHeartRate = hrm.bpm;
   hrConfidence = hrm.confidence;
 }
@@ -169,6 +192,10 @@ function setLimitSetterToLower() {
 
   limitSetter = Setter.LOWER;
   console.log("Limit setter is lower");
+  
+  upperLimitChanged = true;
+  lowerLimitChanged = true;
+  
   renderUpperLimit();
   renderLowerLimit();
 }
@@ -178,6 +205,10 @@ function setLimitSetterToUpper() {
 
   limitSetter = Setter.UPPER;
   console.log("Limit setter is upper");
+  
+  upperLimitChanged = true;
+  lowerLimitChanged = true;
+  
   renderLowerLimit();
   renderUpperLimit();
 }
@@ -185,6 +216,10 @@ function setLimitSetterToUpper() {
 function setLimitSetterToNone() {
   limitSetter = Setter.NONE;
   console.log("Limit setter is none");
+  
+  upperLimitChanged = true;
+  lowerLimitChanged = true;
+  
   renderLowerLimit();
   renderUpperLimit();
 }
@@ -196,10 +231,12 @@ function incrementLimit(){
     upperLimit++;
     renderUpperLimit();
     console.log("Upper limit: " + upperLimit);
+    upperLimitChanged = true;
   } else if(limitSetter === Setter.LOWER) {
     lowerLimit++;
     renderLowerLimit();
     console.log("Lower limit: " + lowerLimit);
+    lowerLimitChanged = true;
   }
 }
   
@@ -210,10 +247,12 @@ function decrementLimit(){
     upperLimit--;
     renderUpperLimit();
     console.log("Upper limit: " + upperLimit);
+    upperLimitChanged = true;
   } else if(limitSetter === Setter.LOWER) {
     lowerLimit--;
     renderLowerLimit();
     console.log("Lower limit: " + lowerLimit);
+    lowerLimitChanged = true;
   }
 }
   
